@@ -1,0 +1,10 @@
+<h2>{{ quiz.title }} - Result</h2>
+
+{% if result %}
+  <p>Your Score: <b>{{ result.score }}%</b></p>
+  <p>Submitted at: {{ result.submitted_at }}</p>
+{% else %}
+  <p>No results found for this quiz.</p>
+{% endif %}
+
+<a href="{% url 'quiz_list' quiz.course.id %}">Back to quizzes</a>
