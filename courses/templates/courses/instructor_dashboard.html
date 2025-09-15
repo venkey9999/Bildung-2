@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Instructor Dashboard</h2>
+
+<h3>Your Courses</h3>
+<ul>
+    {% for course in courses %}
+        <li>
+            {{ course.title }} - {{ course.created_at }}
+            <a href="{% url 'add_event' course.id %}">📅 Add Event</a>
+        </li>
+    {% empty %}
+        <li>No courses yet.</li>
+    {% endfor %}
+</ul>
+
+<a href="{% url 'create_course' %}">+ Create New Course</a>
+{% endblock %}

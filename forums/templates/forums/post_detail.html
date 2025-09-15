@@ -1,0 +1,18 @@
+<h2>{{ post.title }}</h2>
+<p>{{ post.content }}</p>
+<small>by {{ post.author.username }} on {{ post.created_at }}</small>
+
+<h3>Replies</h3>
+<ul>
+  {% for reply in post.replies.all %}
+    <li>{{ reply.author.username }}: {{ reply.content }}</li>
+  {% empty %}
+    <li>No replies yet.</li>
+  {% endfor %}
+</ul>
+
+<form method="post">
+  {% csrf_token %}
+  <textarea name="content" placeholder="Write a reply..." required></textarea><br>
+  <button type="submit">Reply</button>
+</form>

@@ -1,0 +1,12 @@
+<h2>Forum - {{ course.title }}</h2>
+<a href="{% url 'create_post' course.id %}">+ New Post</a>
+<ul>
+  {% for post in posts %}
+    <li>
+      <a href="{% url 'post_detail' post.id %}">{{ post.title }}</a>
+      <small>by {{ post.author.username }} on {{ post.created_at }}</small>
+    </li>
+  {% empty %}
+    <li>No posts yet.</li>
+  {% endfor %}
+</ul>
