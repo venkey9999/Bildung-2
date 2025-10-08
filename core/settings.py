@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    
 
 
     # Your apps
@@ -77,7 +78,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'bildung_db',
         'USER': 'root', # change with your MYSQL username
-        'PASSWORD': '@Saiteja123', # change with your MYSQL password
+        'PASSWORD': '13D41A05l9@', # change with your MYSQL password
         'HOST': 'localhost',
         'PORT': '3306',
         'OPTIONS': {
