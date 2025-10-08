@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Add Event to {{ course.title }}</h2>
+<form method="post">
+  {% csrf_token %}
+  <label>Title:</label><input type="text" name="title" class="form-control" required>
+  <label>Description:</label><textarea name="description" class="form-control"></textarea>
+  <label>Start Time:</label><input type="datetime-local" name="start_time" class="form-control" required>
+  <label>End Time:</label><input type="datetime-local" name="end_time" class="form-control" required>
+  <button type="submit" class="btn btn-primary mt-2">Add Event</button>
+</form>
+{% endblock %}

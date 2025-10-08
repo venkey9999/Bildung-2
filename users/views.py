@@ -8,6 +8,7 @@ from .forms import StudentSignUpForm, InstructorSignUpForm
 from courses.models import Course
 
 
+
 # --- Auth Landing Page (just options, no forms) ---
 def auth_page(request):
     return render(request, "users/auth_page.html")
@@ -67,7 +68,7 @@ def instructor_login(request):
             user = form.get_user()
             if user.role == "instructor":
                 login(request, user)
-                return redirect("instructor_dashboard")
+                return redirect("instructor:instructor_dashboard")
             else:
                 messages.error(request, "This login is only for instructors.")
     else:
@@ -103,3 +104,14 @@ def admin_dashboard(request):
     if request.user.role != "admin":
         return redirect("auth_page")
     return render(request, "admin/dashboard.html")
+
+
+@login_required
+def post_login_redirect(request):
+    user = request.user
+    role = getattr(user, 'role', None)
+    if role == 'instructor':
+        return redirect('courses:instructor_home')
+    if role == 'student':
+        return redirect('students:dashboard')   # adjust if your student dashboard URL name is different
+    return redirect('home')  # fallback
