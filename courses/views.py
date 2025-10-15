@@ -3,8 +3,8 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils.dateparse import parse_datetime
 
-from .models import Course, Enrollment, Lecture, LectureProgress, Feedback, CourseEvent
-from .forms import CourseForm, LectureForm, FeedbackForm
+from .models import Course, Enrollment, Lecture, LectureProgress, Feedback, CourseEvent, Module
+from .forms import CourseForm, LectureForm, FeedbackForm, ModuleFormSet
 from users.decorators import instructor_required
 
 # -------------------------------
@@ -47,7 +47,8 @@ def enroll_course(request, course_id):
 def student_course_detail(request, course_id):
     """Student: view course details + progress"""
     course = get_object_or_404(Course, id=course_id, students=request.user)
-    lectures = course.lectures.all()
+    for module in course.modules.all():
+      lectures = module.lectures.all()
 
     total = lectures.count()
     completed = LectureProgress.objects.filter(
@@ -95,21 +96,38 @@ def instructor_dashboard(request):
     courses = Course.objects.filter(instructor=request.user)
     return render(request, 'courses/instructor/home.html', {'courses': courses})
 
-
-
 @login_required
 def add_course(request):
     if request.method == 'POST':
-        form = CourseForm(request.POST)
-        if form.is_valid():
-            course = form.save(commit=False)
+        course_form = CourseForm(request.POST, request.FILES)
+        if course_form.is_valid():
+            course = course_form.save(commit=False)
             course.instructor = request.user
             course.save()
-            messages.success(request, "Course created successfully.")
+
+            module_total = int(request.POST.get('modules-TOTAL_FORMS', 0))
+            for i in range(module_total):
+                title = request.POST.get(f'modules-{i}-title')
+                desc = request.POST.get(f'modules-{i}-description')
+                if title:
+                    module = Module.objects.create(course=course, title=title, description=desc)
+
+                    lecture_index = 0
+                    while True:
+                        lecture_title = request.POST.get(f'modules-{i}-lectures-{lecture_index}-title')
+                        lecture_file = request.FILES.get(f'modules-{i}-lectures-{lecture_index}-video')
+                        if not lecture_title:
+                            break
+                        Lecture.objects.create(module=module, title=lecture_title, video=lecture_file)
+                        lecture_index += 1
+
             return redirect('instructor_dashboard')
     else:
-        form = CourseForm()
-    return render(request, 'courses/instructor/add_course.html', {'form': form})
+        course_form = CourseForm()
+        module_formset = ModuleFormSet()
+
+    context = {'course_form': course_form, 'module_formset': module_formset}
+    return render(request, 'courses/instructor/add_course.html', context)
 
 
 @login_required
@@ -127,14 +145,19 @@ def course_edit(request, course_id):
     return render(request, 'courses/instructor/course_edit.html', {'form': form, 'course': course})
 
 
-
 @login_required
 def course_detail(request, course_id):
     course = get_object_or_404(Course, id=course_id, instructor=request.user)
-    lectures = course.lectures.all().order_by('created_at')
-    return render(request, 'courses/instructor/course_detail.html', {'course': course, 'lectures': lectures})
+    modules = course.modules.all()
+    lectures = []
+    for module in course.modules.all():
+        lectures = module.lectures.all()
 
-
+    return render(request, 'courses/instructor/course_detail.html', {
+        'course': course,
+        'modules': modules,
+        'lectures': lectures,
+    })
 
 @login_required
 def add_lecture(request, course_id):
@@ -182,7 +205,7 @@ def course_progress_report(request, course_id):
     course = get_object_or_404(Course, id=course_id, instructor=request.user)
     enrollments = Enrollment.objects.filter(course=course)
     progress_data = []
-    total_lectures = course.lectures.count()
+    total_lectures = sum(module.lectures.count() for module in course.modules.all())
 
     for enrollment in enrollments:
         student = enrollment.student
@@ -227,3 +250,4 @@ def give_feedback(request, course_id):
         form = FeedbackForm()
        
     return render(request, 'courses/instructor/give_feedback.html', {'form': form, 'course': course})
+
