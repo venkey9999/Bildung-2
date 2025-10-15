@@ -2,6 +2,9 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.conf import settings
 
+bio = models.TextField(blank=True, null=True, default="")
+
+
 class User(AbstractUser):
     # Roles: student, instructor, admin
     ROLE_CHOICES = (
