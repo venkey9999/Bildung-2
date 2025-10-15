@@ -19,6 +19,10 @@ from django.urls import path, include
 from django.http import HttpResponse
 from home import views as home_views
 
+from django.conf import settings
+from django.conf.urls.static import static
+
+
 # Fallback view for the main domain
 def home(request):
     return HttpResponse("Main Site - Bildung")
@@ -40,3 +44,6 @@ SUBDOMAIN_URLCONFS = {
     'instructor': 'courses.instructor_urls',
     'student': 'courses.student_urls',  # you'll create later
 }
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
