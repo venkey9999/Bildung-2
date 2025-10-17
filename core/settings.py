@@ -76,7 +76,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'bildung_db',
         'USER': 'root', # change with your MYSQL username
-        'PASSWORD': '@Saiteja123', # change with your MYSQL password
+        'PASSWORD': '13D41A05l9', # change with your MYSQL password
         'HOST': 'localhost',
         'PORT': '3306',
         'OPTIONS': {
@@ -132,7 +132,14 @@ CHANNEL_LAYERS = {
     "default": {"BACKEND": "channels.layers.InMemoryChannelLayer"},
 }
 
-# ---------------------------------------------------------------------
+
+
+EMAIL_HOST = 'smtp.example.com'  # e.g., 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'your_email@example.com'  # Your email address
+EMAIL_HOST_PASSWORD = 'your_email_password_or_app_specific_password' # Use environment variables for production!
+DEFAULT_FROM_EMAIL = 'your_email@example.com'# ---------------------------------------------------------------------
 # Internationalization
 # ---------------------------------------------------------------------
 LANGUAGE_CODE = 'en-us'
