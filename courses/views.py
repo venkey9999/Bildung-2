@@ -6,16 +6,23 @@ from django.utils.dateparse import parse_datetime
 from .models import Course, Enrollment, Lecture, LectureProgress, Feedback, CourseEvent, Module
 from .forms import CourseForm, LectureForm, FeedbackForm, ModuleFormSet
 from users.decorators import instructor_required
+from django.db.models import Q
 
 # -------------------------------
 # Common Views
 # -------------------------------
 
-def course_list(request):
-    """Public list of all available courses"""
-    courses = Course.objects.all()
-    return render(request, 'courses/course_list.html', {'courses': courses})
 
+def course_list(request):
+    query = request.GET.get('q')
+    courses = Course.objects.all()
+
+    if query:
+        courses = courses.filter(
+            Q(title__icontains=query) | Q(description__icontains=query)
+        )
+
+    return render(request, 'courses/course_list.html', {'courses': courses, 'query': query})
 
 @login_required(login_url='/login/')
 def browse_courses(request):
@@ -145,7 +152,7 @@ def course_edit(request, course_id):
     return render(request, 'courses/instructor/course_edit.html', {'form': form, 'course': course})
 
 
-@login_required
+
 def course_detail(request, course_id):
     course = get_object_or_404(Course, id=course_id, instructor=request.user)
     modules = course.modules.all()

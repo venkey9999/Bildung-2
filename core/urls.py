@@ -37,7 +37,7 @@ urlpatterns = [
 
     # Include all user-related routes (signup, login, dashboards)
     path("", include("users.urls")),
-    path('', include('courses.urls')),
+    path('courses/', include('courses.urls')),
 ]
 
 SUBDOMAIN_URLCONFS = {
