@@ -21,6 +21,7 @@ from home import views as home_views
 
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib.auth import views as auth_views
 
 
 # Fallback view for the main domain
@@ -37,7 +38,12 @@ urlpatterns = [
 
     # Include all user-related routes (signup, login, dashboards)
     path("", include("users.urls")),
+<<<<<<< HEAD
     path('courses/', include('courses.urls')),
+=======
+    path('', include('courses.urls')),
+    path('accounts/', include('django.contrib.auth.urls')),  # For password reset and other auth views
+>>>>>>> 51022409a9d72f3348161f48803aa94dc7439117
 ]
 
 SUBDOMAIN_URLCONFS = {
@@ -47,3 +53,18 @@ SUBDOMAIN_URLCONFS = {
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns = [
+    # ... your other URLs ...
+
+    # The Password Reset URL is defined here
+    path(
+        'password_reset/', 
+        auth_views.PasswordResetView.as_view(template_name='students/password_reset_form.html'), 
+        name='password_reset' # <-- The name matching the HTML link!
+    ),
+
+    # You must also define the other 3 password reset paths for the flow to complete
+    path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(...), name='password_reset_done'),
+    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(...), name='password_reset_confirm'),
+    path('reset/done/', auth_views.PasswordResetCompleteView.as_view(...), name='password_reset_complete'),
+]
