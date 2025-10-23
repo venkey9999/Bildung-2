@@ -70,10 +70,11 @@
         <h1>Learn Anything, Anytime, Anywhere</h1>
         <p>Join thousands of learners and instructors on Bildung.</p>
         <div class="search-bar mt-4">
-            <form method="get" action="{% url 'courses:course_list' %}">
-                <input type="text" class="form-control d-inline-block" name="q" placeholder="Search for courses...">
-                <button type="submit" class="btn btn-warning mt-3">Search</button>
-            </form>
+  <form method="get" action="{% url 'courses:course_list' %}">
+    <input type="text" class="form-control d-inline-block" name="q" placeholder="Search for courses..." required>
+    <button type="submit" class="btn btn-warning mt-3">Search</button>
+</form>
+
         </div>
     </section>
 
@@ -99,7 +100,7 @@
                         <h5 class="card-title">{{ course.title }}</h5>
                         <p class="card-text">{{ course.description|truncatewords:15 }}</p>
                         <p class="fw-bold">Price: ${{ course.price }}</p>
-                        <a href="#" class="btn btn-outline-primary">View Course</a>
+                        <a href="{% url 'instructor:course_detail' course.id %}" class="btn btn-outline-primary">View Course</a>
                     </div>
                 </div>
             </div>
