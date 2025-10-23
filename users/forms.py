@@ -6,15 +6,14 @@ from .models import User
 class StudentSignUpForm(UserCreationForm):
     class Meta:
         model = User
-        fields = ["username", "email", "password1", "password2"]
+        fields = ["first_name","last_name", "email", "password1", "password2"]
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.role = "student"
+        user.username = self.cleaned_data["email"]  # Email is used as username
         if commit:
             user.save()
-        return user
-
+        return user 
 
 class InstructorSignUpForm(UserCreationForm):
     date_of_birth = forms.DateField(

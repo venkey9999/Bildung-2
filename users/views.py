@@ -3,10 +3,7 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
-
-from .forms import InstructorSignUpForm
 from .models import User
-
 from .forms import StudentSignUpForm, InstructorSignUpForm
 from courses.models import Course
 from django.core.mail import send_mail
@@ -24,16 +21,17 @@ def student_signup(request):
     if request.method == 'POST':
         form = StudentSignUpForm(request.POST)
         if form.is_valid():
-            user = form.save(commit=False)
-            user.role = 'student'
-            user.save()
-            login(request, user)
-            return redirect('student_dashboard')
+            user = form.save() 
+            user.role = 'student'             
+            login(request, user)            # Log them in
+            messages.success(request, f"Welcome {user.first_name}! Your account has been created.")
+            return redirect('student_dashboard')  # URL name in courses/urls.py
+        else:
+            messages.error(request, "Please correct the errors below.")
     else:
         form = StudentSignUpForm()
-    return render(request, 'student/signup.html', {'form': form})
 
-
+    return render(request, 'users/student_signup.html', {'form': form})
 # --- Instructor Signup ---
   
 
@@ -49,10 +47,10 @@ def instructor_signup(request):
                 user.set_password(raw_password)      
             user.save()                     
             login(request, user)
-            return redirect("instructor:instructor_dashboard")
+            return redirect("instructor_dashboard")
     else:
         form = InstructorSignUpForm()
-    return render(request, 'instructor/signup.html', {'form': form})
+    return render(request, 'users/instructor_signup.html', {'form': form})
 
 
 # --- Student Login ---
@@ -98,7 +96,7 @@ def student_dashboard(request):
     if request.user.role != "student":
         return redirect("auth_page")
     enrolled_courses = Course.objects.filter(enrollments__student=request.user)
-    return render(request, "courses/instructor/student_dashboard.html", {"enrolled_courses": enrolled_courses})
+    return render(request, "courses/student_dashboard.html", {"enrolled_courses": enrolled_courses})
 
 
 @login_required(login_url="/auth/")
@@ -122,9 +120,9 @@ def post_login_redirect(request):
     user = request.user
     role = getattr(user, 'role', None)
     if role == 'instructor':
-        return redirect('courses:instructor_home')
+        return redirect('instructor_dashboard')
     if role == 'student':
-        return redirect('students:dashboard')   
+        return redirect('student_dashboard')   
     return redirect('home') 
 def signup_view(request):
     """
