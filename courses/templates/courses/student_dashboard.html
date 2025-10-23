@@ -6,7 +6,7 @@
 <ul>
     {% for course in enrolled_courses %}
         <li>
-            <a href="{% url 'course_detail' course.id %}">{{ course.title }}</a>
+            <a href="{% url 'instructor:course_detail' course.id %}">{{ course.title }}</a>
         </li>
     {% empty %}
         <li>You haven’t enrolled in any courses yet.</li>
