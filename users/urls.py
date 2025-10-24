@@ -11,6 +11,11 @@ urlpatterns = [
     path("student/signup/", views.student_signup, name="student_signup"),
     path("student/login/", views.student_login, name="student_login"),
     path("student/dashboard/", views.student_dashboard, name="student_dashboard"),
+    # Student course-related URLs (namespaced)
+    #path("student/", include(("courses.student_urls", "student"), namespace="student")),
+    path("student/", include(("courses.student_urls", "student_courses"), namespace="student_courses")),
+
+
 
     # Password reset
     path('password-reset/', 
