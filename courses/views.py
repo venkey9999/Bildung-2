@@ -152,7 +152,7 @@ def course_edit(request, course_id):
     return render(request, 'courses/instructor/course_edit.html', {'form': form, 'course': course})
 
 
-
+@login_required
 def course_detail(request, course_id):
     course = get_object_or_404(Course, id=course_id, instructor=request.user)
     modules = course.modules.all()

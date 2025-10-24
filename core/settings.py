@@ -133,13 +133,6 @@ CHANNEL_LAYERS = {
 }
 
 
-
-EMAIL_HOST = 'smtp.example.com'  # e.g., 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'your_email@example.com'  # Your email address
-EMAIL_HOST_PASSWORD = 'your_email_password_or_app_specific_password' # Use environment variables for production!
-DEFAULT_FROM_EMAIL = 'your_email@example.com'# ---------------------------------------------------------------------
 # Internationalization
 # ---------------------------------------------------------------------
 LANGUAGE_CODE = 'en-us'
@@ -150,3 +143,18 @@ USE_TZ = True
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = '/accounts/post-login/'
 SITE_ID = 1
+
+#password_reset_mail local
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
+
+#password_reset_mail
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'antharisaiteja@gmail.com'
+EMAIL_HOST_PASSWORD ='viybdcfqakmylkus'
+DEFAULT_FROM_EMAIL = 'Bildung Platform <antharisaiteja@gmail.com>'
+
