@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from .models import User
 from .forms import StudentSignUpForm, InstructorSignUpForm
-from courses.models import Course
+from courses.models import Course, Enrollment
 from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -95,8 +95,9 @@ def logout_view(request):
 def student_dashboard(request):
     if request.user.role != "student":
         return redirect("auth_page")
-    enrolled_courses = Course.objects.filter(enrollments__student=request.user)
-    return render(request, "courses/student_dashboard.html", {"enrolled_courses": enrolled_courses})
+
+    enrollments = Enrollment.objects.filter(student=request.user).select_related("course")
+    return render(request, "courses/student_dashboard.html", {"enrollments": enrollments})
 
 
 @login_required(login_url="/auth/")
