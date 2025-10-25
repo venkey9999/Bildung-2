@@ -31,7 +31,7 @@ def browse_courses(request):
         return redirect('login')
 
     available_courses = Course.objects.exclude(students=request.user)
-    return render(request, 'courses/browse_courses.html', {'courses': available_courses})
+    return render(request, 'courses/browse_course.html', {'courses': available_courses})
 
 
 # -------------------------------
@@ -152,7 +152,7 @@ def course_edit(request, course_id):
     return render(request, 'courses/instructor/course_edit.html', {'form': form, 'course': course})
 
 
-
+@login_required
 def course_detail(request, course_id):
     course = get_object_or_404(Course, id=course_id, instructor=request.user)
     modules = course.modules.all()
@@ -258,3 +258,17 @@ def give_feedback(request, course_id):
        
     return render(request, 'courses/instructor/give_feedback.html', {'form': form, 'course': course})
 
+@login_required(login_url='/login/')
+def student_course_list(request):
+    """Student: list all available courses (both enrolled and unenrolled)"""
+    if getattr(request.user, 'role', None) != 'student':
+        return redirect('login')
+
+    # Show all courses (you can change to only unenrolled if preferred)
+    courses = Course.objects.all()
+    enrolled_ids = Enrollment.objects.filter(student=request.user).values_list('course_id', flat=True)
+
+    for course in courses:
+        course.is_enrolled = course.id in enrolled_ids
+
+    return render(request, 'courses/student/course_list.html', {'courses': courses})
